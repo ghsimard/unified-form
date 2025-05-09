@@ -18,7 +18,7 @@ services:
     name: unified-form-backend
     env: node
     buildCommand: npm install && npm run build
-    startCommand: node dist/server/index.js
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
