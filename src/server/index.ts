@@ -46,8 +46,8 @@ app.get('/api/schools', async (req: Request, res: Response) => {
       ORDER BY name;
     `;
     
-    const result = await pool.query(query, [`%${searchTerm}%`]);
-    res.json(result.rows.map((row: { name: string }) => row.name));
+    const result = await pool.query<{ name: string }>(query, [`%${searchTerm}%`]);
+    res.json(result.rows.map(row => row.name));
   } catch (error) {
     console.error('Error fetching school names:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -138,7 +138,7 @@ app.post('/api/submit-form', async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Invalid form type' });
     }
 
-    const result = await pool.query(query, values);
+    const result = await pool.query<{ id: number }>(query, values);
     const insertedId = result.rows[0]?.id;
     if (!insertedId) {
       throw new Error('Failed to get inserted ID');
@@ -171,22 +171,22 @@ pool.query('SELECT NOW()', (err: Error | null) => {
     console.log('Successfully connected to database');
     
     // List available tables
-    pool.query(`
+    pool.query<{ table_name: string }>(`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
-    `, (err: Error | null, result: QueryResult) => {
+    `, (err: Error | null, result: QueryResult<{ table_name: string }>) => {
       if (err) {
         console.error('Error listing tables:', err);
       } else {
         console.log('Available tables:', result.rows);
         
         // Get table structure for rectores
-        pool.query(`
+        pool.query<{ column_name: string; data_type: string }>(`
           SELECT column_name, data_type 
           FROM information_schema.columns 
           WHERE table_name = 'rectores'
-        `, (err: Error | null, result: QueryResult) => {
+        `, (err: Error | null, result: QueryResult<{ column_name: string; data_type: string }>) => {
           if (err) {
             console.error('Error getting table structure:', err);
           } else {

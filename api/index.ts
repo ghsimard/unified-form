@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Pool } from 'pg';
+import { Pool, QueryResult } from 'pg';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -133,8 +133,12 @@ app.post('/api/submit-form', async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Invalid form type' });
     }
 
-    const result = await pool.query(query, values);
-    res.json({ success: true, id: result.rows[0].id });
+    const result = await pool.query<{ id: number }>(query, values);
+    const insertedId = result.rows[0]?.id;
+    if (!insertedId) {
+      throw new Error('Failed to get inserted ID');
+    }
+    res.json({ success: true, id: insertedId });
   } catch (error) {
     console.error('Error submitting form:', error);
     res.status(500).json({ error: 'Internal server error' });
