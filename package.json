@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && npm run build:server",
+    "build": "tsc && vite build",
     "build:server": "rm -rf dist/server && tsc -p tsconfig.server.json",
+    "vercel-build": "npm run build && npm run build:server",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "tsx watch src/server/index.ts",
-    "start": "node dist/server/index.js",
-    "vercel-build": "npm run build"
+    "start": "node dist/server/index.js"
   },
   "keywords": [],
   "author": "",
