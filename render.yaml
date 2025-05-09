@@ -10,18 +10,20 @@ services:
         value: production
       - key: VITE_API_URL
         value: https://unified-form-backend.onrender.com
+      - key: PORT
+        value: 10000
 
   # Backend service
   - type: web
     name: unified-form-backend
     env: node
-    buildCommand: npm install
-    startCommand: npm run server
+    buildCommand: npm install && npm run build
+    startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3000
+        value: 10000
       - key: FRONTEND_URL
         value: https://unified-form-frontend.onrender.com
       - key: DB_USER
