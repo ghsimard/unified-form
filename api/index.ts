@@ -1,7 +1,7 @@
-import express from 'express';
-import { Pool } from 'pg';
-import cors from 'cors';
-import dotenv from 'dotenv';
+const express = require('express');
+const { Pool } = require('pg');
+const cors = require('cors');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -32,7 +32,7 @@ const pool = new Pool({
 // API endpoint to search for school names
 app.get('/api/schools', async (req, res) => {
   try {
-    const searchTerm = req.query.search as string || '';
+    const searchTerm = req.query.search || '';
     const query = `
       SELECT DISTINCT nombre_de_la_institucion_educativa_en_la_actualmente_desempena_ as name
       FROM rectores
@@ -42,7 +42,7 @@ app.get('/api/schools', async (req, res) => {
     `;
     
     const result = await pool.query(query, [`%${searchTerm}%`]);
-    res.json(result.rows.map((row: { name: string }) => row.name));
+    res.json(result.rows.map(row => row.name));
   } catch (error) {
     console.error('Error fetching school names:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -142,4 +142,4 @@ app.post('/api/submit-form', async (req, res) => {
 });
 
 // Export the Express API
-export default app; 
+module.exports = app; 

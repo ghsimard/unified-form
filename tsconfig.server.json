@@ -6,8 +6,9 @@
     "outDir": "dist/server",
     "noEmit": false,
     "sourceMap": true,
-    "allowJs": true
+    "allowJs": true,
+    "target": "ES2020"
   },
-  "include": ["src/server/**/*"],
+  "include": ["src/server/**/*", "api/**/*"],
   "exclude": ["node_modules", "dist"]
 } 
