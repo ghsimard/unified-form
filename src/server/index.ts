@@ -1,8 +1,9 @@
-import express from 'express';
-import { Pool } from 'pg';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
+import { Request, Response } from 'express';
+const express = require('express');
+const { Pool } = require('pg');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
@@ -44,7 +45,7 @@ pool.query('SELECT NOW()')
       WHERE table_schema = 'public'
     `);
   })
-  .then(result => {
+  .then((result: { rows: any[] }) => {
     console.log('Available tables:', result.rows);
     // Check docentes_form_submissions table structure
     return pool.query(`
@@ -53,16 +54,16 @@ pool.query('SELECT NOW()')
       WHERE table_name = 'docentes_form_submissions'
     `);
   })
-  .then(result => {
+  .then((result: { rows: any[] }) => {
     console.log('docentes_form_submissions table structure:', result.rows);
   })
-  .catch(err => {
+  .catch((err: Error) => {
     console.error('Error checking database:', err);
     process.exit(1);
   });
 
 // API endpoint to search for school names
-app.get('/api/schools', async (req, res) => {
+app.get('/api/schools', async (req: Request, res: Response) => {
   try {
     const searchTerm = req.query.search as string || '';
     const query = `
@@ -74,7 +75,7 @@ app.get('/api/schools', async (req, res) => {
     `;
     
     const result = await pool.query(query, [`%${searchTerm}%`]);
-    res.json(result.rows.map(row => row.name));
+    res.json(result.rows.map((row: { name: string }) => row.name));
   } catch (error) {
     console.error('Error fetching school names:', error);
     res.status(500).json({ error: 'Internal server error' });
