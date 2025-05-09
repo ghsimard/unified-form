@@ -5,12 +5,12 @@
   "type": "commonjs",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && tsc -p tsconfig.server.json",
+    "build": "tsc && vite build",
     "build:server": "tsc -p tsconfig.server.json",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "tsx watch src/server/index.ts",
-    "start": "node server.js"
+    "start": "node dist/server/index.js"
   },
   "keywords": [],
   "author": "",

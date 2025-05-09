@@ -19,10 +19,8 @@ services:
     env: node
     buildCommand: |
       npm install
-      npm run build
-      mkdir -p dist/server
-      cp -r src/server/* dist/server/
-    startCommand: node server.js
+      npm run build:server
+    startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
         value: production
