@@ -23,8 +23,10 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.NODE_ENV === 'production' ? 'cosmo_rlt' : 'COSMO_RLT',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // API endpoint to search for school names
