@@ -22,6 +22,7 @@ services:
     buildCommand: |
       npm install
       echo "Building server..."
+      npm run build
       npm run build:server
       echo "Checking build output..."
       ls -la dist/server
