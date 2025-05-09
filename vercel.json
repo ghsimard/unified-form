@@ -15,7 +15,13 @@
         "distDir": "dist",
         "buildCommand": "npm run vercel-build",
         "installCommand": "npm install",
-        "outputDirectory": "dist"
+        "outputDirectory": "dist",
+        "builds": [
+          {
+            "src": "package.json",
+            "use": "@vercel/static-build"
+          }
+        ]
       }
     }
   ],
