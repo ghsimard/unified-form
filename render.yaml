@@ -17,7 +17,11 @@ services:
   - type: web
     name: unified-form-backend
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: |
+      npm install
+      npm run build
+      mkdir -p dist/server
+      cp -r src/server/* dist/server/
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
