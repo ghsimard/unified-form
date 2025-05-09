@@ -18,11 +18,16 @@ services:
     name: unified-form-backend
     env: node
     buildCommand: |
+      #!/bin/bash
+      set -e
+      echo "Installing dependencies..."
       npm install
       echo "Building server..."
-      npm run build:server
-      echo "Checking dist directory..."
-      ls -la dist/server
+      npx tsc -p tsconfig.server.json
+      echo "Checking build output..."
+      ls -la dist/server || echo "dist/server directory not found"
+      echo "Current directory contents:"
+      ls -la
     startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
