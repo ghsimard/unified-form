@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/server/index.js",
+      "src": "api/index.ts",
       "use": "@vercel/node"
     },
     {
@@ -16,7 +16,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "dist/server/index.js"
+      "dest": "/api/index.ts"
     },
     {
       "src": "/(.*)",
@@ -29,6 +29,7 @@
     "DB_PASSWORD": "@db_password",
     "DB_HOST": "@db_host",
     "DB_PORT": "5432",
-    "DB_NAME": "cosmo_rlt"
+    "DB_NAME": "cosmo_rlt",
+    "FRONTEND_URL": "@frontend_url"
   }
 } 
