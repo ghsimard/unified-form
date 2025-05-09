@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import express from 'express';
-import { Pool } from 'pg';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
+const express = require('express');
+const { Pool } = require('pg');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const path = require('path');
 import { fileURLToPath } from 'url';
 
 dotenv.config();

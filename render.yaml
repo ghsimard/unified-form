@@ -20,15 +20,9 @@ services:
     name: unified-form-backend
     env: node
     buildCommand: |
-      #!/bin/bash
-      set -e
-      echo "Installing dependencies..."
       npm install
-      echo "Building server..."
       npm run build:server
-      echo "Checking build output..."
-      ls -la dist/server
-    startCommand: node --experimental-specifier-resolution=node dist/server/index.js
+    startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
         value: production
