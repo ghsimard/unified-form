@@ -1,14 +1,10 @@
-import express, { Request, Response } from 'express';
-import { Pool } from 'pg';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const express = require('express');
+const { Pool } = require('pg');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -17,15 +13,10 @@ const port = process.env.PORT || 3001;
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? process.env.FRONTEND_URL 
-    : 'http://localhost:5173'
+    : 'http://localhost:3000'
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../dist')));
-}
 
 // PostgreSQL connection configuration
 const pool = new Pool({
@@ -33,42 +24,16 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.NODE_ENV === 'production' ? 'cosmo_rlt' : 'COSMO_RLT',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-// Test database connection
-pool.query('SELECT NOW()')
-  .then(() => {
-    console.log('Successfully connected to database');
-    // Check if tables exist
-    return pool.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public'
-    `);
-  })
-  .then((result: { rows: any[] }) => {
-    console.log('Available tables:', result.rows);
-    // Check rectores table structure
-    return pool.query(`
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_name = 'rectores'
-    `);
-  })
-  .then((result: { rows: any[] }) => {
-    console.log('rectores table structure:', result.rows);
-  })
-  .catch((err: Error) => {
-    console.error('Error checking database:', err);
-    process.exit(1);
-  });
-
 // API endpoint to search for school names
-app.get('/api/schools', async (req: Request, res: Response) => {
+app.get('/api/schools', async (req, res) => {
   try {
-    const searchTerm = req.query.search as string || '';
+    const searchTerm = req.query.search || '';
     const query = `
       SELECT DISTINCT nombre_de_la_institucion_educativa_en_la_actualmente_desempena_ as name
       FROM rectores
@@ -78,8 +43,7 @@ app.get('/api/schools', async (req: Request, res: Response) => {
     `;
     
     const result = await pool.query(query, [`%${searchTerm}%`]);
-    console.log('Schools found:', result.rows); // Add logging to debug
-    res.json(result.rows.map((row: { name: string }) => row.name));
+    res.json(result.rows.map(row => row.name));
   } catch (error) {
     console.error('Error fetching school names:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -87,20 +51,10 @@ app.get('/api/schools', async (req: Request, res: Response) => {
 });
 
 // API endpoint to submit forms
-app.post('/api/submit-form', async (req: Request, res: Response) => {
+app.post('/api/submit-form', async (req, res) => {
   try {
     const { formType, ...formData } = req.body;
     console.log('Received form submission:', { formType, formData });
-
-    // First check if the table exists and its structure
-    const tableCheckQuery = `
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_name = 'docentes_form_submissions';
-    `;
-    
-    const tableStructure = await pool.query(tableCheckQuery);
-    console.log('Table structure:', tableStructure.rows);
 
     let query;
     let values;
@@ -130,8 +84,6 @@ app.post('/api/submit-form', async (req: Request, res: Response) => {
           formData.practicas_pedagogicas,
           formData.convivencia
         ];
-        console.log('Docentes query:', query);
-        console.log('Docentes values:', values);
         break;
 
       case 'estudiantes':
@@ -183,7 +135,6 @@ app.post('/api/submit-form', async (req: Request, res: Response) => {
     }
 
     const result = await pool.query(query, values);
-    console.log('Query result:', result.rows[0]);
     res.json({ success: true, id: result.rows[0].id });
   } catch (error) {
     console.error('Error submitting form:', error);
@@ -191,13 +142,50 @@ app.post('/api/submit-form', async (req: Request, res: Response) => {
   }
 });
 
-// Add catch-all route for SPA in production
+// Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (_req: Request, res: Response) => {
+  app.use(express.static(path.join(__dirname, '../../dist')));
+  app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../../dist/index.html'));
   });
 }
 
+// Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+// Test database connection
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('Error connecting to database:', err);
+  } else {
+    console.log('Successfully connected to database');
+    
+    // List available tables
+    pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `, (err, res) => {
+      if (err) {
+        console.error('Error listing tables:', err);
+      } else {
+        console.log('Available tables:', res.rows);
+        
+        // Get table structure for rectores
+        pool.query(`
+          SELECT column_name, data_type 
+          FROM information_schema.columns 
+          WHERE table_name = 'rectores'
+        `, (err, res) => {
+          if (err) {
+            console.error('Error getting table structure:', err);
+          } else {
+            console.log('rectores table structure:', res.rows);
+          }
+        });
+      }
+    });
+  }
 }); 

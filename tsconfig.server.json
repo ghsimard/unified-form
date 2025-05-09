@@ -7,8 +7,26 @@
     "noEmit": false,
     "sourceMap": true,
     "allowJs": true,
-    "target": "ES2020"
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/server/**/*", "api/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/server/**/*",
+    "api/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 } 

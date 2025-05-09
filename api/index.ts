@@ -30,9 +30,9 @@ const pool = new Pool({
 });
 
 // API endpoint to search for school names
-app.get('/api/schools', async (req, res) => {
+app.get('/api/schools', async (req: express.Request, res: express.Response) => {
   try {
-    const searchTerm = req.query.search || '';
+    const searchTerm = req.query.search as string || '';
     const query = `
       SELECT DISTINCT nombre_de_la_institucion_educativa_en_la_actualmente_desempena_ as name
       FROM rectores
@@ -42,7 +42,7 @@ app.get('/api/schools', async (req, res) => {
     `;
     
     const result = await pool.query(query, [`%${searchTerm}%`]);
-    res.json(result.rows.map(row => row.name));
+    res.json(result.rows.map((row: { name: string }) => row.name));
   } catch (error) {
     console.error('Error fetching school names:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -50,7 +50,7 @@ app.get('/api/schools', async (req, res) => {
 });
 
 // API endpoint to submit forms
-app.post('/api/submit-form', async (req, res) => {
+app.post('/api/submit-form', async (req: express.Request, res: express.Response) => {
   try {
     const { formType, ...formData } = req.body;
     console.log('Received form submission:', { formType, formData });
