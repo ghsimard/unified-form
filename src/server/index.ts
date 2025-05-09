@@ -29,9 +29,9 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME,
-  ssl: {
+  ssl: process.env.NODE_ENV === 'production' ? {
     rejectUnauthorized: false
-  }
+  } : false
 });
 
 // API endpoint to search for school names
@@ -160,7 +160,7 @@ app.listen(port, () => {
 });
 
 // Test database connection
-pool.query('SELECT NOW()', (err: Error | null, res: any) => {
+pool.query('SELECT NOW()', (err: Error | null) => {
   if (err) {
     console.error('Error connecting to database:', err);
   } else {
@@ -171,22 +171,22 @@ pool.query('SELECT NOW()', (err: Error | null, res: any) => {
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
-    `, (err: Error | null, res: any) => {
+    `, (err: Error | null, result: any) => {
       if (err) {
         console.error('Error listing tables:', err);
       } else {
-        console.log('Available tables:', res.rows);
+        console.log('Available tables:', result.rows);
         
         // Get table structure for rectores
         pool.query(`
           SELECT column_name, data_type 
           FROM information_schema.columns 
           WHERE table_name = 'rectores'
-        `, (err: Error | null, res: any) => {
+        `, (err: Error | null, result: any) => {
           if (err) {
             console.error('Error getting table structure:', err);
           } else {
-            console.log('rectores table structure:', res.rows);
+            console.log('rectores table structure:', result.rows);
           }
         });
       }
