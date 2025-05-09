@@ -19,7 +19,10 @@ services:
     env: node
     buildCommand: |
       npm install
+      echo "Building server..."
       npm run build:server
+      echo "Checking dist directory..."
+      ls -la dist/server
     startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
