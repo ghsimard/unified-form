@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Pool } from 'pg';
+import { Pool, QueryResult } from 'pg';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -139,7 +139,11 @@ app.post('/api/submit-form', async (req: Request, res: Response) => {
     }
 
     const result = await pool.query(query, values);
-    res.json({ success: true, id: result.rows[0].id });
+    const insertedId = result.rows[0]?.id;
+    if (!insertedId) {
+      throw new Error('Failed to get inserted ID');
+    }
+    res.json({ success: true, id: insertedId });
   } catch (error) {
     console.error('Error submitting form:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -171,7 +175,7 @@ pool.query('SELECT NOW()', (err: Error | null) => {
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
-    `, (err: Error | null, result: any) => {
+    `, (err: Error | null, result: QueryResult) => {
       if (err) {
         console.error('Error listing tables:', err);
       } else {
@@ -182,7 +186,7 @@ pool.query('SELECT NOW()', (err: Error | null) => {
           SELECT column_name, data_type 
           FROM information_schema.columns 
           WHERE table_name = 'rectores'
-        `, (err: Error | null, result: any) => {
+        `, (err: Error | null, result: QueryResult) => {
           if (err) {
             console.error('Error getting table structure:', err);
           } else {

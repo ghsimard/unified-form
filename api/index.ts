@@ -1,7 +1,7 @@
-const express = require('express');
-const { Pool } = require('pg');
-const cors = require('cors');
-const dotenv = require('dotenv');
+import express, { Request, Response } from 'express';
+import { Pool } from 'pg';
+import cors from 'cors';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -24,13 +24,13 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME,
-  ssl: {
+  ssl: process.env.NODE_ENV === 'production' ? {
     rejectUnauthorized: false
-  }
+  } : false
 });
 
 // API endpoint to search for school names
-app.get('/api/schools', async (req: express.Request, res: express.Response) => {
+app.get('/api/schools', async (req: Request, res: Response) => {
   try {
     const searchTerm = req.query.search as string || '';
     const query = `
@@ -50,7 +50,7 @@ app.get('/api/schools', async (req: express.Request, res: express.Response) => {
 });
 
 // API endpoint to submit forms
-app.post('/api/submit-form', async (req: express.Request, res: express.Response) => {
+app.post('/api/submit-form', async (req: Request, res: Response) => {
   try {
     const { formType, ...formData } = req.body;
     console.log('Received form submission:', { formType, formData });
@@ -142,4 +142,4 @@ app.post('/api/submit-form', async (req: express.Request, res: express.Response)
 });
 
 // Export the Express API
-module.exports = app; 
+export default app; 
