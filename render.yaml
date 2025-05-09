@@ -19,24 +19,15 @@ services:
   - type: web
     name: unified-form-backend
     env: node
-    buildCommand: |
-      npm install
-      echo "Building server..."
-      npm run build
-      npm run build:server
-      echo "Checking build output..."
-      ls -la dist/server
-    startCommand: |
-      echo "Starting server..."
-      ls -la dist/server
-      node dist/server/index.js
+    buildCommand: npm install && npm run build && npm run build:server
+    startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
       - key: FRONTEND_URL
-        value: https://unified-form-frontend.onrender.com
+        value: https://unified-form.onrender.com
       - key: DB_USER
         sync: false
       - key: DB_PASSWORD
@@ -46,4 +37,6 @@ services:
       - key: DB_PORT
         value: 5432
       - key: DB_NAME
-        value: cosmo_rlt 
+        value: cosmo_rlt
+    healthCheckPath: /api/schools
+    autoDeploy: true 
