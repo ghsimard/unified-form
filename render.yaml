@@ -19,6 +19,7 @@ services:
     env: node
     buildCommand: |
       npm install
+      npm run build
       npm run build:server
     startCommand: node dist/server/index.js
     envVars:

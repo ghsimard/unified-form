@@ -83,7 +83,7 @@ app.get('/api/schools', async (req: Request, res: Response) => {
 });
 
 // API endpoint to submit forms
-app.post('/api/submit-form', async (req, res) => {
+app.post('/api/submit-form', async (req: Request, res: Response) => {
   try {
     const { formType, ...formData } = req.body;
     console.log('Received form submission:', { formType, formData });
@@ -189,7 +189,7 @@ app.post('/api/submit-form', async (req, res) => {
 
 // Add catch-all route for SPA in production
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
+  app.get('*', (_req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../../dist/index.html'));
   });
 }
