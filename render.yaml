@@ -20,21 +20,12 @@ services:
     buildCommand: |
       #!/bin/bash
       set -e
-      echo "Current directory: $(pwd)"
-      echo "Directory contents:"
-      ls -la
       echo "Installing dependencies..."
       npm install
-      echo "Creating dist directory..."
-      mkdir -p dist/server
       echo "Building server..."
-      npx tsc -p tsconfig.server.json
+      npm run build:server
       echo "Checking build output..."
-      ls -la dist/server || echo "dist/server directory not found"
-      echo "Copying server files..."
-      cp -r src/server/* dist/server/
-      echo "Final directory structure:"
-      find . -type f -name "*.js" | sort
+      ls -la dist/server
     startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
