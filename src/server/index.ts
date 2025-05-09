@@ -1,10 +1,14 @@
-const express = require('express');
-const { Pool } = require('pg');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
+import express, { Request, Response } from 'express';
+import { Pool } from 'pg';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -31,9 +35,9 @@ const pool = new Pool({
 });
 
 // API endpoint to search for school names
-app.get('/api/schools', async (req, res) => {
+app.get('/api/schools', async (req: Request, res: Response) => {
   try {
-    const searchTerm = req.query.search || '';
+    const searchTerm = req.query.search as string || '';
     const query = `
       SELECT DISTINCT nombre_de_la_institucion_educativa_en_la_actualmente_desempena_ as name
       FROM rectores
@@ -43,7 +47,7 @@ app.get('/api/schools', async (req, res) => {
     `;
     
     const result = await pool.query(query, [`%${searchTerm}%`]);
-    res.json(result.rows.map(row => row.name));
+    res.json(result.rows.map((row: { name: string }) => row.name));
   } catch (error) {
     console.error('Error fetching school names:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -51,7 +55,7 @@ app.get('/api/schools', async (req, res) => {
 });
 
 // API endpoint to submit forms
-app.post('/api/submit-form', async (req, res) => {
+app.post('/api/submit-form', async (req: Request, res: Response) => {
   try {
     const { formType, ...formData } = req.body;
     console.log('Received form submission:', { formType, formData });
@@ -145,7 +149,7 @@ app.post('/api/submit-form', async (req, res) => {
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../../dist')));
-  app.get('*', (req, res) => {
+  app.get('*', (_req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../../dist/index.html'));
   });
 }
@@ -156,7 +160,7 @@ app.listen(port, () => {
 });
 
 // Test database connection
-pool.query('SELECT NOW()', (err, res) => {
+pool.query('SELECT NOW()', (err: Error | null, res: any) => {
   if (err) {
     console.error('Error connecting to database:', err);
   } else {
@@ -167,7 +171,7 @@ pool.query('SELECT NOW()', (err, res) => {
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
-    `, (err, res) => {
+    `, (err: Error | null, res: any) => {
       if (err) {
         console.error('Error listing tables:', err);
       } else {
@@ -178,7 +182,7 @@ pool.query('SELECT NOW()', (err, res) => {
           SELECT column_name, data_type 
           FROM information_schema.columns 
           WHERE table_name = 'rectores'
-        `, (err, res) => {
+        `, (err: Error | null, res: any) => {
           if (err) {
             console.error('Error getting table structure:', err);
           } else {
