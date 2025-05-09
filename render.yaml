@@ -22,7 +22,7 @@ services:
     buildCommand: |
       npm install
       npm run build:server
-    startCommand: node dist/server/index.js
+    startCommand: node --experimental-specifier-resolution=node dist/server/index.js
     envVars:
       - key: NODE_ENV
         value: production
