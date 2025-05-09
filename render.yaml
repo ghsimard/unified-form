@@ -22,7 +22,6 @@ services:
     buildCommand: |
       npm install
       echo "Building server..."
-      rm -rf dist/server
       npm run build:server
       echo "Checking build output..."
       ls -la dist/server
@@ -46,4 +45,4 @@ services:
       - key: DB_PORT
         value: 5432
       - key: DB_NAME
-        sync: false 
+        value: cosmo_rlt 

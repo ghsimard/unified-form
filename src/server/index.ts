@@ -33,7 +33,7 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME,
+  database: process.env.NODE_ENV === 'production' ? 'cosmo_rlt' : 'COSMO_RLT',
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
@@ -50,15 +50,15 @@ pool.query('SELECT NOW()')
   })
   .then((result: { rows: any[] }) => {
     console.log('Available tables:', result.rows);
-    // Check docentes_form_submissions table structure
+    // Check rectores table structure
     return pool.query(`
       SELECT column_name, data_type 
       FROM information_schema.columns 
-      WHERE table_name = 'docentes_form_submissions'
+      WHERE table_name = 'rectores'
     `);
   })
   .then((result: { rows: any[] }) => {
-    console.log('docentes_form_submissions table structure:', result.rows);
+    console.log('rectores table structure:', result.rows);
   })
   .catch((err: Error) => {
     console.error('Error checking database:', err);
@@ -78,6 +78,7 @@ app.get('/api/schools', async (req: Request, res: Response) => {
     `;
     
     const result = await pool.query(query, [`%${searchTerm}%`]);
+    console.log('Schools found:', result.rows); // Add logging to debug
     res.json(result.rows.map((row: { name: string }) => row.name));
   } catch (error) {
     console.error('Error fetching school names:', error);
