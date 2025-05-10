@@ -284,7 +284,8 @@ const AcudientesForm = () => {
                     value={formData.schoolName}
                     onChange={handleSchoolNameChange}
                     onKeyDown={handleSchoolNameKeyDown}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    placeholder="Escriba el nombre de la institución..."
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-2 border-gray-400 rounded-md bg-gray-50 text-gray-900 placeholder-gray-500 hover:bg-white focus:bg-white transition-colors"
                     required
                   />
                   {showSuggestions && schoolSuggestions.length > 0 && (
