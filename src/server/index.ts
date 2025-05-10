@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Pool, QueryResult } from 'pg';
+import { Pool } from 'pg';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -175,13 +175,13 @@ if (process.env.NODE_ENV === 'production') {
   const __dirname = path.dirname(__filename);
   app.use(express.static(path.join(__dirname, '../../dist')));
   
-  app.get('*', (req, res) => {
+  app.get('*', (_req, res) => {
     res.sendFile(path.join(__dirname, '../../dist/index.html'));
   });
 }
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
@@ -189,7 +189,7 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
   
   // Test database connection
-  pool.query('SELECT NOW()', (err, res) => {
+  pool.query('SELECT NOW()', (err) => {
     if (err) {
       console.error('Error connecting to the database:', err);
     } else {
