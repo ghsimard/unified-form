@@ -1,5 +1,5 @@
 const API_URL = import.meta.env.PROD 
-  ? '/api'  // In production, use relative path for Vercel
+  ? 'https://unified-form.onrender.com/api'  // In production, use the Render.com URL
   : 'http://localhost:3001/api';
 
 export async function searchSchools(searchTerm: string): Promise<string[]> {
