@@ -9,9 +9,9 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'https://unified-form.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },
@@ -20,7 +20,6 @@ export default defineConfig({
     host: '0.0.0.0',
     strictPort: true,
     allowedHosts: [
-      'localhost',
       'unified-form.onrender.com',
       '.onrender.com'
     ]

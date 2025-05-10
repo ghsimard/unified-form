@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { estudiantesFrequencyQuestions5, estudiantesFrequencyQuestions6, estudiantesFrequencyQuestions7, frequencyOptions } from '../data/questions';
 import ThankYouPage from './ThankYouPage';
+import { searchSchools } from '../lib/api';
 
 type FrequencySection = 'comunicacion' | 'practicas_pedagogicas' | 'convivencia';
 
@@ -73,17 +74,11 @@ const EstudiantesForm = () => {
     if (value.length >= 3) {
       try {
         console.log('Fetching suggestions for:', value);
-        const response = await fetch(`http://localhost:3001/api/schools?search=${encodeURIComponent(value)}`);
-        console.log('Response status:', response.status);
-        if (response.ok) {
-          const suggestions = await response.json();
-          console.log('Received suggestions:', suggestions);
-          if (suggestions.length > 0) {
-            setSchoolSuggestions(suggestions);
-            setShowSuggestions(true);
-          }
-        } else {
-          console.error('Error response:', await response.text());
+        const schools = await searchSchools(value);
+        console.log('Received suggestions:', schools);
+        if (schools.length > 0) {
+          setSchoolSuggestions(schools);
+          setShowSuggestions(true);
         }
       } catch (error) {
         console.error('Error fetching school suggestions:', error);

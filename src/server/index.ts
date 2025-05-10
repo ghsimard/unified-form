@@ -15,9 +15,7 @@ const port = parseInt(process.env.PORT || '3001', 10);
 
 // Enable CORS for the frontend
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://unified-form.onrender.com', 'https://*.onrender.com']
-    : 'http://localhost:3000',
+  origin: ['https://unified-form.onrender.com', 'https://*.onrender.com'],
   methods: ['GET', 'POST'],
   credentials: true
 }));
