@@ -335,7 +335,7 @@ const EstudiantesForm = () => {
                 3. ¿En qué grado estás actualmente? <span className="text-red-600">*</span>
               </label>
               <div className="mt-4 space-y-4">
-                {['5°', '8°', '9°', '10°', '11°'].map((grade) => (
+                {['5°', '6°', '7°', '8°', '9°', '10°', '11°', '12°'].map((grade) => (
                   <div key={grade} className="flex items-center">
                     <input
                       type="radio"
