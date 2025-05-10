@@ -16,7 +16,14 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 3000
+    port: 3000,
+    host: '0.0.0.0',
+    strictPort: true,
+    allowedHosts: [
+      'localhost',
+      'unified-form.onrender.com',
+      '.onrender.com'
+    ]
   },
   build: {
     outDir: 'dist',
