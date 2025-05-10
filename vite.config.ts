@@ -7,13 +7,6 @@ export default defineConfig({
   base: '/',
   server: {
     port: 3000,
-    proxy: {
-      '/api': {
-        target: 'https://unified-form.onrender.com',
-        changeOrigin: true,
-        secure: true,
-      },
-    },
   },
   preview: {
     port: 3000,
