@@ -1,5 +1,5 @@
 const API_URL = import.meta.env.PROD 
-  ? 'https://unified-form.onrender.com/api'  // In production, use the Render.com URL
+  ? 'https://unified-form-backend.onrender.com/api'  // In production, use the backend service URL
   : 'http://localhost:3001/api';
 
 export async function searchSchools(searchTerm: string): Promise<string[]> {
