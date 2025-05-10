@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:server && tsc && vite build",
+    "build": "npm run build:server && npm run build:client",
     "build:server": "rm -rf ./dist/server && tsc -p ./tsconfig.server.json --listFiles && echo 'Server files:' && ls -la ./dist/server && echo 'Contents of dist:' && ls -la ./dist && echo 'Current directory:' && pwd",
+    "build:client": "vite build && echo 'After Vite build - Contents of dist:' && ls -la ./dist && echo 'After Vite build - Contents of dist/server:' && ls -la ./dist/server",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "echo 'Current directory:' && pwd && echo 'Contents of dist:' && ls -la ./dist && echo 'Contents of dist/server:' && ls -la ./dist/server && node --experimental-specifier-resolution=node ./dist/server/index.js"
