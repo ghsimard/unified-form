@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { acudientesFrequencyQuestions5, acudientesFrequencyQuestions6, acudientesFrequencyQuestions7, frequencyOptions } from '../data/questions';
 import ThankYouPage from './ThankYouPage';
+import { searchSchools } from '../lib/api';
 
 type FrequencySection = 'comunicacion' | 'practicas_pedagogicas' | 'convivencia';
 
@@ -109,13 +110,10 @@ const AcudientesForm = () => {
     // Only fetch new suggestions if we have 3 or more characters
     if (value.length >= 3) {
       try {
-        const response = await fetch(`/api/schools?search=${encodeURIComponent(value)}`);
-        if (response.ok) {
-          const suggestions = await response.json();
-          if (suggestions.length > 0) {
-            setSchoolSuggestions(suggestions);
-            setShowSuggestions(true);
-          }
+        const schools = await searchSchools(value);
+        if (schools.length > 0) {
+          setSchoolSuggestions(schools);
+          setShowSuggestions(true);
         }
       } catch (error) {
         console.error('Error fetching school suggestions:', error);
