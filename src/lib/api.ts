@@ -20,6 +20,8 @@ export async function submitForm(formType: string, formData: any): Promise<{ suc
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Server response:', errorText);
     throw new Error('Failed to submit form');
   }
 

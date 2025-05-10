@@ -90,7 +90,6 @@ const DocentesForm = () => {
     }
 
     const formPayload = {
-      formType: 'docentes',
       schoolName: formData.schoolName,
       yearsOfExperience: formData.yearsOfExperience,
       teachingGradesEarly: formData.teachingGradesEarly,
