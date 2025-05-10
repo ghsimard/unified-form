@@ -7,8 +7,11 @@ import { fileURLToPath } from 'url';
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const port = process.env.PORT || 3001;
+const port = parseInt(process.env.PORT || '3001', 10);
 
 // Enable CORS for the frontend
 app.use(cors({
@@ -171,8 +174,6 @@ app.post('/api/submit-form', async (req: Request, res: Response) => {
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
   app.use(express.static(path.join(__dirname, '../../dist')));
   
   app.get('*', (_req, res) => {
@@ -185,7 +186,7 @@ app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
   
   // Test database connection
