@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { acudientesFrequencyQuestions5, acudientesFrequencyQuestions6, acudientesFrequencyQuestions7, frequencyOptions } from '../data/questions';
 import ThankYouPage from './ThankYouPage';
-import { searchSchools } from '../lib/api';
+import { searchSchools, submitForm } from '../lib/api';
 
 type FrequencySection = 'comunicacion' | 'practicas_pedagogicas' | 'convivencia';
 
@@ -74,25 +74,16 @@ const AcudientesForm = () => {
     }
 
     try {
-      const response = await fetch('/api/submit-form', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          formType: 'acudientes',
-          schoolName: formData.schoolName,
-          studentGrades: formData.studentGrades,
-          comunicacion: formData.frequencyRatings.comunicacion,
-          practicas_pedagogicas: formData.frequencyRatings.practicas_pedagogicas,
-          convivencia: formData.frequencyRatings.convivencia
-        }),
+      const result = await submitForm('acudientes', {
+        schoolName: formData.schoolName,
+        studentGrades: formData.studentGrades,
+        comunicacion: formData.frequencyRatings.comunicacion,
+        practicas_pedagogicas: formData.frequencyRatings.practicas_pedagogicas,
+        convivencia: formData.frequencyRatings.convivencia
       });
 
-      if (response.ok) {
+      if (result.success) {
         setIsSubmitted(true);
-      } else {
-        console.error('Error submitting form');
       }
     } catch (error) {
       console.error('Error submitting form:', error);

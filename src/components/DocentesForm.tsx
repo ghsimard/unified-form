@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { docentesFrequencyQuestions7, docentesFrequencyQuestions8, docentesFrequencyQuestions9, frequencyOptions } from '../data/questions';
 import ThankYouPage from './ThankYouPage';
-import { searchSchools } from '../lib/api';
+import { searchSchools, submitForm } from '../lib/api';
 
 type FrequencySection = 'comunicacion' | 'practicas_pedagogicas' | 'convivencia';
 
@@ -105,22 +105,9 @@ const DocentesForm = () => {
     console.log('Submitting form with payload:', formPayload);
 
     try {
-      const response = await fetch('/api/submit-form', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formPayload),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Form submission successful:', result);
-        setIsSubmitted(true);
-      } else {
-        const errorData = await response.json();
-        console.error('Error submitting form:', errorData);
-      }
+      const result = await submitForm('docentes', formPayload);
+      console.log('Form submission successful:', result);
+      setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);
     }
