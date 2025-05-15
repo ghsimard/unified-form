@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { docentesFrequencyQuestions7, docentesFrequencyQuestions8, docentesFrequencyQuestions9, frequencyOptions } from '../data/questions';
 import ThankYouPage from './ThankYouPage';
 import { searchSchools, submitForm } from '../lib/api';
@@ -36,10 +36,19 @@ const DocentesForm = () => {
 
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [allSchools, setAllSchools] = useState<string[]>([]);
 
-  const [schoolSuggestions, setSchoolSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  useEffect(() => {
+    const fetchAllSchools = async () => {
+      try {
+        const schools = await searchSchools('');
+        setAllSchools(schools);
+      } catch (error) {
+        console.error('Error fetching all schools:', error);
+      }
+    };
+    fetchAllSchools();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -109,59 +118,6 @@ const DocentesForm = () => {
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);
-    }
-  };
-
-  const handleSchoolNameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData(prev => ({ ...prev, schoolName: value }));
-    
-    // Always reset suggestions when input changes
-    setSchoolSuggestions([]);
-    setShowSuggestions(false);
-
-    // Only fetch new suggestions if we have 3 or more characters
-    if (value.length >= 3) {
-      try {
-        const schools = await searchSchools(value);
-        if (schools.length > 0) {
-          setSchoolSuggestions(schools);
-          setShowSuggestions(true);
-        }
-      } catch (error) {
-        console.error('Error fetching school suggestions:', error);
-      }
-    }
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setFormData(prev => ({ ...prev, schoolName: suggestion }));
-    setShowSuggestions(false);
-    setSchoolSuggestions([]);
-    setActiveSuggestionIndex(-1);
-  };
-
-  const handleSchoolNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (showSuggestions && schoolSuggestions.length > 0) {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const newIndex = activeSuggestionIndex < schoolSuggestions.length - 1
-          ? activeSuggestionIndex + 1
-          : 0;
-        setActiveSuggestionIndex(newIndex);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const newIndex = activeSuggestionIndex > 0
-          ? activeSuggestionIndex - 1
-          : schoolSuggestions.length - 1;
-        setActiveSuggestionIndex(newIndex);
-      } else if (e.key === 'Enter' && activeSuggestionIndex >= 0) {
-        e.preventDefault();
-        handleSuggestionClick(schoolSuggestions[activeSuggestionIndex]);
-      } else if (e.key === 'Escape') {
-        setShowSuggestions(false);
-        setActiveSuggestionIndex(-1);
-      }
     }
   };
 
@@ -287,34 +243,22 @@ const DocentesForm = () => {
                 <label htmlFor="schoolName" className="block text-sm font-medium text-gray-700">
                   Nombre de la Institución Educativa
                 </label>
-                <div className="mt-1 relative">
-                  <input
-                    type="text"
+                <div className="mt-1">
+                  <select
                     id="schoolName"
                     name="schoolName"
                     value={formData.schoolName}
-                    onChange={handleSchoolNameChange}
-                    onKeyDown={handleSchoolNameKeyDown}
-                    placeholder="Escriba el nombre de la institución..."
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-2 border-gray-400 rounded-md bg-gray-50 text-gray-900 placeholder-gray-500 hover:bg-white focus:bg-white transition-colors"
+                    onChange={(e) => setFormData(prev => ({ ...prev, schoolName: e.target.value }))}
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-2 border-gray-400 rounded-md bg-gray-50 text-gray-900 hover:bg-white focus:bg-white transition-colors"
                     required
-                  />
-                  {showSuggestions && schoolSuggestions.length > 0 && (
-                    <ul className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                      {schoolSuggestions.map((suggestion, index) => (
-                        <li
-                          key={index}
-                          id={`suggestion-${index}`}
-                          className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-blue-50 ${
-                            index === activeSuggestionIndex ? 'bg-blue-50' : ''
-                          }`}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                        >
-                          {suggestion}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  >
+                    <option value="">Seleccione una institución...</option>
+                    {allSchools.map((school) => (
+                      <option key={school} value={school}>
+                        {school}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
